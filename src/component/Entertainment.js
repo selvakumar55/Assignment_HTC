@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, FlatList, ActivityIndicator, Text, TextInput} from 'react-native';
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  Text,
+  TextInput,
+  Image,
+} from 'react-native';
 import {connect} from 'react-redux';
 import {StyleSheet} from 'react-native';
 
@@ -7,11 +14,13 @@ import {fetchEntertainmentData} from '../action/actions';
 import styles from './Entertainment.style';
 
 type EntertainmentData = {
-  Title: string,
-  Year: string,
-  imdbID: string,
-  Type: string,
-  Poster: string,
+  Search: {
+    Title: string,
+    Year: string,
+    imdbID: string,
+    Type: string,
+    Poster: string,
+  },
 };
 
 type Props = {
@@ -29,10 +38,33 @@ const Entertainment = (props: Props) => {
     fetchEntertainmentInfo(text);
   };
 
+  const renderList = () => {
+    console.log('data3', data);
+    if (data) {
+      return (
+        <FlatList
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                minHeight: StyleSheet.hairlineWidth,
+                opacity: 0.3,
+                backgroundColor: '#404041',
+              }}
+            />
+          )}
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={extractKey}
+        />
+      );
+    }
+    renderErrorMessage();
+  };
+
   const extractKey = (item: EntertainmentData, index: number) =>
     `${item}-${index}`;
 
-  const renderItem = ({item}: {item: EntertainmentData}) => {
+  const renderItem = ({item}) => {
     return (
       <View
         style={{
@@ -40,12 +72,33 @@ const Entertainment = (props: Props) => {
           backgroundColor: '#ffffff',
           flexDirection: 'row',
           alignItems: 'center',
+          paddingLeft: 30,
+          flex: 1,
         }}>
-        <Text>item?.Title</Text>
-        <Text>item?.Year</Text>
-        <Text>item?.imdbID</Text>
-        <Text>item?.Type</Text>
-        <Text>item?.Poster</Text>
+        <Image style={{width: 90, height: 80}} source={{uri: item?.Poster}} />
+        <View style={{marginHorizontal: 15}}>
+          <Text numberOfLines={1} style={{fontSize: 15, fontWeight: 'bold'}}>
+            {item?.Title}
+          </Text>
+          <Text>{item?.Year}</Text>
+          <Text>{item?.imdbID}</Text>
+          <Text>{item?.Type}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderErrorMessage = () => {
+    console.log('hellow');
+    return (
+      <View
+        style={{alignItems: 'center', justifyContent: 'center', marginTop: 30}}>
+        <Text
+          style={{
+            fontSize: 20,
+          }}>
+          Your search is not found
+        </Text>
       </View>
     );
   };
@@ -62,7 +115,13 @@ const Entertainment = (props: Props) => {
     <View>
       <TextInput
         placeholder="Search"
-        style={{backgroundColor: 'transparent', marginTop: 40}}
+        style={{
+          backgroundColor: 'transparent',
+          marginTop: 40,
+          borderWidth: 1,
+          padding: 10,
+          marginHorizontal: 15,
+        }}
         onChangeText={changeText => {
           setType(changeText);
         }}
@@ -70,17 +129,8 @@ const Entertainment = (props: Props) => {
           onSubmit(type);
         }}
       />
-
-      <FlatList
-        ItemSeparatorComponent={{
-          minHeight: StyleSheet.hairlineWidth,
-          opacity: 0.3,
-          backgroundColor: '#404041',
-        }}
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={extractKey}
-      />
+      {renderList()}
+      {renderErrorMessage()}
     </View>
   );
 };
