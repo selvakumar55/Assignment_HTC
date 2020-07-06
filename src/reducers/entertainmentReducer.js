@@ -18,7 +18,7 @@ export default function entertainmentReducer(state = initialState, action) {
     case FETCHING_ENTERTAINMENT_DATA_SUCCESS:
       return {...state, data: action.data.Search, isFetching: false};
     case FETCHING_ENTERTAINMENT_DATA_ERROR:
-      return {...state, erro: true, isFetching: false};
+      return {...state, isError: true, isFetching: false};
     default:
       return state;
   }

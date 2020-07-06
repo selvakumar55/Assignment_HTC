@@ -140,7 +140,7 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  loading: state.isFetching,
+  loading: state.entertainmentReducer.isFetching,
   data: state.entertainmentReducer.data,
 });
 
